@@ -1,0 +1,6 @@
+com\workday\Ids.class
+com\workday\NetRangeQueryContainer.class
+com\workday\WorkerIds.class
+com\workday\NetRangeQueryContainerFactory.class
+com\workday\RangeContainer.class
+com\workday\RangeQueryContainerFactory.class
