@@ -76,7 +76,7 @@ public class RangeQueryBasicTest {
     }
 
     @Test
-    public void runARangeQuery_withEqualInputs_expectValieResult() {
+    public void runARangeQuery_withEqualInputs_andInclusive_expectValidResult() {
         Ids ids = container.findIdsInRange(17, 17, true, true);
         assertEquals(2, ids.nextId());
         assertEquals(Ids.END_OF_IDS, ids.nextId());
@@ -89,19 +89,20 @@ public class RangeQueryBasicTest {
     }
 
     @Test
-    public void runARangeQuery_withInvalidInputs_expectDefaultValue() {
-        Ids ids = container.findIdsInRange(-1, -1, true, true);
+    public void runARangeQuery_withEqualInputs_andExclusive_expectDefaultValue2() {
+        Ids ids = container.findIdsInRange(17, 17, false, true);
         assertEquals(Ids.END_OF_IDS, ids.nextId());
     }
 
     @Test
-    public void runARangeQuery_withExraValues_expectCorrectResults() {
-        final RangeQueryContainerFactory factory = new NetRangeQueryContainerFactory();
-        final RangeContainer container = factory.createContainer(new long[]{10, 12, 17, 21, 2, 15, 16});
-        Ids ids = container.findIdsInRange(16, 1000, true, true);
-        assertEquals(2, ids.nextId());
-        assertEquals(3, ids.nextId());
-        assertEquals(6, ids.nextId());
+    public void runARangeQuery_withEqualInputs_andExclusive_expectDefaultValue3() {
+        Ids ids = container.findIdsInRange(17, 17, false, true);
+        assertEquals(Ids.END_OF_IDS, ids.nextId());
+    }
+
+    @Test
+    public void runARangeQuery_withInvalidInputs_expectDefaultValue() {
+        Ids ids = container.findIdsInRange(-1, -1, true, false);
         assertEquals(Ids.END_OF_IDS, ids.nextId());
     }
 

@@ -15,7 +15,7 @@
         <version.slf4j>1.7.21</version.slf4j>
         <version.logback>1.1.7</version.logback>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <testSourceDirectory>test/test/java</testSourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
     </properties>
     <build>
         <pluginManagement>
