@@ -20,12 +20,8 @@ import static com.workday.ContainerHelper.getComparator;
 import static com.workday.ContainerHelper.getCorrectRanges;
 import static com.workday.ContainerHelper.populateContainerData;
 
-import java.util.Collections;
 import java.util.SortedMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * container holding worker net salary data
@@ -35,7 +31,20 @@ import org.slf4j.LoggerFactory;
  */
 public final class NetRangeQueryContainer implements RangeContainer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NetRangeQueryContainer.class);
+    /**
+     * for logging
+     */
+    private static final StringBuilder STRING_BUILDER = new StringBuilder(1);
+
+    /**
+     * default array of ids to return
+     */
+    private static final short[] DEFAULT_IDS_ARRAY = new short[0];
+
+    /**
+     * default Ids object to return
+     */
+    private static final Ids DEFAULT_IDS_OBJECT = new WorkerIds(DEFAULT_IDS_ARRAY);
 
     /**<p>
      * container data</br></br>
@@ -57,28 +66,20 @@ public final class NetRangeQueryContainer implements RangeContainer {
     @Override
     public Ids findIdsInRange(final long fromValue, final long toValue, final boolean fromInclusive, final boolean toInclusive) {
         if (isInValidInput(fromValue, toValue) || isUnProcessibleQuery(fromValue, toValue, fromInclusive, toInclusive)) {
-            return new WorkerIds(new short[0]);
+            return DEFAULT_IDS_OBJECT;
         }
         final long[] ranges = getCorrectRanges(fromValue, toValue, fromInclusive, toInclusive);
+        STRING_BUILDER.delete(0, STRING_BUILDER.length());
+        System.out.println(STRING_BUILDER.append(Thread.currentThread().getName()).append(": ").append("start processing"));
+        STRING_BUILDER.delete(0, STRING_BUILDER.length());
         final long startTimeInNanoSeconds = System.nanoTime();
-        LOG.info("start processing");
         final short[] ids = getIds(ranges[0], ranges[1], fromInclusive, toInclusive);
-        LOG.info("processing took {}ms to find {} id(s)", (double)(System.nanoTime() - startTimeInNanoSeconds) / 1000000000.0, ids.length);
+        System.out.println(
+                STRING_BUILDER.append(Thread.currentThread().getName()).append(": ")
+                .append("processing took ").append((double)(System.nanoTime() - startTimeInNanoSeconds) / 1000000000.0)
+                .append(" ms to find ").append(ids.length).append(" id(s)"));
+        STRING_BUILDER.delete(0, STRING_BUILDER.length());
         return new WorkerIds(ids);
-    }
-
-    /**
-     * @return the size of data in this container
-     */
-    int getContainerSize() {
-        return this.data.size();
-    }
-
-    /**
-     * @return the data in this container
-     */
-    SortedMap<Long, Short> getContainerData() {
-        return Collections.unmodifiableSortedMap(this.data);
     }
 
     /**
@@ -91,9 +92,9 @@ public final class NetRangeQueryContainer implements RangeContainer {
      * @return query matching ids in this container data
      */
     private short[] getIds(final long startPosition, final long endPosition, final boolean fromInclusive, final boolean toInclusive) {
-        final SortedMap<Long, Short> subMapView = getContainerData().subMap(startPosition, endPosition);
+        final SortedMap<Long, Short> subMapView = this.data.subMap(startPosition, endPosition);
         if (subMapView.isEmpty()) {
-            return new short[0];
+            return DEFAULT_IDS_ARRAY;
         }
         return getAsSortedArray(subMapView.values());
     }

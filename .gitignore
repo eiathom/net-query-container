@@ -10,6 +10,9 @@ target/**
 target/*
 /target
 target/
+/target/**
+/target/
+/target/*
 
 /bin
 tmp/

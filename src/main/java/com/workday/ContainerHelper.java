@@ -28,6 +28,10 @@ import java.util.Map;
  */
 public final class ContainerHelper {
 
+    private static final long[] ranges = new long[2];
+
+    private static final List<Short> values = new ArrayList<>();
+
     private ContainerHelper() {}
 
     /**
@@ -48,7 +52,8 @@ public final class ContainerHelper {
      * @return correct range query parameters
      */
     public static long[] getCorrectRanges(final long fromValue, final long toValue, final boolean fromInclusive, final boolean toInclusive) {
-        long[] ranges = new long[]{fromValue, toValue};
+        ranges[0] = fromValue;
+        ranges[1] = toValue;
         if (toValue < fromValue) {
             ranges[0] = toValue;
             ranges[1] = fromValue;
@@ -103,7 +108,8 @@ public final class ContainerHelper {
      * @return array representation of values
      */
     public static short[] getAsSortedArray(final Collection<Short> data) {
-        final List<Short> values = new ArrayList<>(data);
+        values.clear();
+        values.addAll(data);
         if (values.size() > 1) {
             Collections.sort(values);
         }
@@ -115,11 +121,10 @@ public final class ContainerHelper {
      * @return an array representation of data
      */
     public static short[] toArray(final List<Short> data) {
-        final Object[] rawArray = data.toArray();
-        final int arrayLength = rawArray.length;
+        final int arrayLength = data.size();
         final short[] array = new short[arrayLength];
         for (int index = 0; index < arrayLength; index++) {
-            array[index] = (short) rawArray[index];
+            array[index] = data.get(index);
         }
         return array;
     }
